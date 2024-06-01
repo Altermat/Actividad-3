@@ -1,4 +1,6 @@
 import { ConfigProvider } from 'antd';
+import { BrowserRouter } from 'react-router-dom';
+import AppRoutes from './routes/index.jsx';
 import './App.css'
 import Login from './pages/Login';
 
@@ -12,7 +14,9 @@ function App() {
                 }
             }}
         >
-            <Login />
+            <BrowserRouter>
+                <AppRoutes></AppRoutes>
+            </BrowserRouter>
         </ConfigProvider>
   )
 }

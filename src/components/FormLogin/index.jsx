@@ -1,16 +1,32 @@
-import React from "react";
+import React, { useState } from 'react';
 import { Button, Form, Input, Card } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import {useNavigate} from "react-router-dom";
 import './FormLogin.css'
 
 const FormLogin = () => {
+    const [loginError, setLoginError] = useState(false);
+    const navigate = useNavigate();
+
+    const user = {
+        username: 'admin',
+        password: 'admin'
+    };
 
     const onFinish = (values) => {
         console.log('Success:', values);
+        if (user.username === values.username && user.password === values.password) {
+            setLoginError(false);
+            navigate('/home');
+        }else{
+            onFinishFailed();
+        }
     };
 
+    
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
+        setLoginError(true);
     };
 
     return (
@@ -30,42 +46,34 @@ const FormLogin = () => {
                 >
                     <Form.Item
                         name="username"
-                        rules={[
-                        {
+                        rules={[{
                             required: true,
-                            message: 'Por favor ingresa tu nombre de usuario!',
-                        },
-                        ]}
+                            message: 'Por favor ingrese su usuario'
+                        }]}
                     >
-                        <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+                        <Input prefix={<UserOutlined />} placeholder='Usuario' />
                     </Form.Item>
+
                     <Form.Item
                         name="password"
-                        rules={[
-                        {
+                        rules={[{
                             required: true,
-                            message: 'Por favor ingresa tu contraseña!',
-                        },
-                        ]}
+                            message: 'Por favor ingrese su contraseña'
+                        }]}
                     >
-                        <Input
-                            prefix={<LockOutlined className="site-form-item-icon" />}
-                            type="password"
-                            placeholder="Contraseña"
-                        />
-                        </Form.Item>
+                        <Input.Password prefix={<LockOutlined />} placeholder='Contraseña' />
+                    </Form.Item>
 
-                        <Form.Item>
+                    {loginError && <div className="login-error">Usuario o contraseña incorrectos</div>}
 
-                            <Button type="primary" htmlType="submit" className="login-form-button">
-                                Iniciar Sesión
-                                </Button>
-
-                                </Form.Item>
-                                ¿Aún no tienes cuenta? <a href="">Registrate</a>
+                    <Form.Item>
+                        <Button type='primary' htmlType='submit' className='login-form-button'>
+                            Iniciar Sesión
+                        </Button>
+                    </Form.Item>
+                    ¿Aún no tienes cuenta? <a href='/register'>Regístrate</a>
                 </Form>
-
-        </Card>
+            </Card>
             );
         };
 
