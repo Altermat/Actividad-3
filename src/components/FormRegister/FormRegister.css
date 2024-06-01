@@ -1,11 +1,11 @@
-.responsive-card{
+.responsive-card {
     text-align: center;
     width: 80%;
     max-width: 800px;
-    margin: 0;
+    margin: auto; 
     padding: 20px;
 }
-.imagen{
+.imagen {
     width: 100px;
     height: 100px;
 }
