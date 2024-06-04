@@ -6,6 +6,7 @@ import './FormLogin.css'
 
 const FormLogin = () => {
     const [loginError, setLoginError] = useState(false);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const user = {
@@ -13,15 +14,24 @@ const FormLogin = () => {
         password: 'admin'
     };
 
-    const onFinish = (values) => {
-        console.log('Success:', values);
-        if (user.username === values.username && user.password === values.password) {
-            setLoginError(false);
-            navigate('/home');
-        }else{
-            onFinishFailed();
+    const onFinish = async (values) => {
+        setLoading(true);
+        try{
+            const response = await axios.post('https://evaluacion-2.vercel.app/api/users/',{
+                email: values.username,
+                password: values.password
+            });
+            console.log('Login exitoso', response.data);
+            localStorage.setItem('token', response.data.token);
+            navigate('/');
+        }catch(error){
+            console.error('Error en el login:', error.response.data);
+            setLoginError(true);
+        }finally{
+            setLoading(false);
         }
     };
+        
 
     
     const onFinishFailed = (errorInfo) => {
@@ -43,6 +53,7 @@ const FormLogin = () => {
                         remember: true,
                     }}
                     onFinish={onFinish}
+                    onFinishFailed={onFinishFailed}
                 >
                     <Form.Item
                         name="username"
@@ -67,6 +78,7 @@ const FormLogin = () => {
                     {loginError && <div className="login-error">Usuario o contraseña incorrectos</div>}
 
                     <Form.Item>
+                        {loginError && <p style={{color: 'red'}}>Usuario o contraseña incorrectos</p>}
                         <Button type='primary' htmlType='submit' className='login-form-button'>
                             Iniciar Sesión
                         </Button>
