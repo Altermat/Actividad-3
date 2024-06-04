@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Form, Input, Card } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import axios from 'axios';
 import {useNavigate} from "react-router-dom";
 import './FormLogin.css'
 
@@ -13,7 +14,7 @@ const FormLogin = () => {
 
     const onFinish = (values) => {
         const { email, password } = values;
-        setIsLoading(true);
+        setLoading(true);
 
         axios.post('https://evaluacion-2.vercel.app/api/auth/signin', {
             email: email,
@@ -21,7 +22,7 @@ const FormLogin = () => {
         })
             .then((response) => {
                 console.log('Login successful:', response.data);
-                setIsLoading(false);
+                setLoading(false);
                 setLoginError(false);
                 // Almacena el token en el localStorage o en el contexto de la aplicación
                 localStorage.setItem('token', response.data.token);
@@ -34,7 +35,7 @@ const FormLogin = () => {
             })
             .catch((error) => {
                 console.error('Login failed:', error.response.data);
-                setIsLoading(false);
+                setLoading(false);
                 setLoginError(true);
             });
         };
