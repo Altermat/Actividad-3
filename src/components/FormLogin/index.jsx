@@ -9,30 +9,36 @@ const FormLogin = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const user = {
-        username: 'admin',
-        password: 'admin'
-    };
+    
 
-    const onFinish = async (values) => {
-        setLoading(true);
-        try{
-            const response = await axios.post('https://evaluacion-2.vercel.app/api/users/',{
-                email: values.username,
-                password: values.password
+    const onFinish = (values) => {
+        const { email, password } = values;
+        setIsLoading(true);
+
+        axios.post('https://evaluacion-2.vercel.app/api/auth/signin', {
+            email: email,
+            password: password
+        })
+            .then((response) => {
+                console.log('Login successful:', response.data);
+                setIsLoading(false);
+                setLoginError(false);
+                // Almacena el token en el localStorage o en el contexto de la aplicación
+                localStorage.setItem('token', response.data.token);
+                notification.success({
+                    message: 'Inicio de sesión exitoso',
+                    description: 'Bienvenido de nuevo.',
+                    placement: 'topRight',
+                });
+                navigate('/'); // Redirige a la página de inicio
+            })
+            .catch((error) => {
+                console.error('Login failed:', error.response.data);
+                setIsLoading(false);
+                setLoginError(true);
             });
-            console.log('Login exitoso', response.data);
-            localStorage.setItem('token', response.data.token);
-            navigate('/');
-        }catch(error){
-            console.error('Error en el login:', error.response.data);
-            setLoginError(true);
-        }finally{
-            setLoading(false);
-        }
-    };
-        
-
+        };
+    
     
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
