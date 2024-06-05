@@ -1,12 +1,14 @@
 import { ConfigProvider } from 'antd';
 import { BrowserRouter } from 'react-router-dom';
 import AppRoutes from './routes/index.jsx';
+import { AuthProvider } from './context/AuthContext.jsx';
 import './App.css'
 import Login from './pages/Login';
 
 function App() {
 
   return (
+    <AuthProvider>
     <ConfigProvider
             theme = {{
                 token: {
@@ -18,6 +20,7 @@ function App() {
                 <AppRoutes></AppRoutes>
             </BrowserRouter>
         </ConfigProvider>
+        </AuthProvider>
   )
 }
 

@@ -3,6 +3,9 @@ import { Button, Form, Input, Card } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
+import authService from '../../services/auth';
+import { useAuth } from '../../hooks/useAuth'
+import axios from 'axios';
 import './FormLogin.css'
 
 const FormLogin = () => {
@@ -10,37 +13,33 @@ const FormLogin = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    
+    const useAuthData = useAuth();
+    console.log(useAuthData);
 
-    const onFinish = (values) => {
-        const { email, password } = values;
+    const onFinish = async (values) => {
         setLoading(true);
-
-        axios.post('https://evaluacion-2.vercel.app/api/auth/signin', {
-            email: email,
-            password: password
-        })
-            .then((response) => {
-                console.log('Login successful:', response.data);
-                setLoading(false);
-                setLoginError(false);
-                // Almacena el token en el localStorage o en el contexto de la aplicación
+        setLoginError(false);
+        try{
+            const response = await authService.loginFn(values.username, values.password);
+            if (response && response.data) {
                 localStorage.setItem('token', response.data.token);
-                notification.success({
-                    message: 'Inicio de sesión exitoso',
-                    description: 'Bienvenido de nuevo.',
-                    placement: 'topRight',
-                });
-                navigate('/'); // Redirige a la página de inicio
-            })
-            .catch((error) => {
-                console.error('Login failed:', error.response.data);
-                setLoading(false);
+                console.log(response.data.token)
+                navigate('/');
+                
+            } else {
+                console.error('Error al iniciar sesión: Respuesta inesperada');
                 setLoginError(true);
-            });
-        };
-    
-    
+            }
+
+        }catch(error){
+            console.error('Error en el login:', error.response ? error.response.data : error.message);
+            setLoginError(true);
+        }finally{
+            setLoading(false);
+        }
+    };
+        
+
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
         setLoginError(true);
