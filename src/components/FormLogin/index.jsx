@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Button, Form, Input, Card } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import {useNavigate} from "react-router-dom";
+import authService from '../../services/auth';
+import { useAuth } from '../../hooks/useAuth'
+import axios from 'axios';
 import './FormLogin.css'
 
 const FormLogin = () => {
@@ -9,23 +12,26 @@ const FormLogin = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const user = {
-        username: 'admin',
-        password: 'admin'
-    };
+    const useAuthData = useAuth();
+    console.log(useAuthData);
 
     const onFinish = async (values) => {
         setLoading(true);
+        setLoginError(false);
         try{
-            const response = await axios.post('https://evaluacion-2.vercel.app/api/users/',{
-                email: values.username,
-                password: values.password
-            });
-            console.log('Login exitoso', response.data);
-            localStorage.setItem('token', response.data.token);
-            navigate('/');
+            const response = await authService.loginFn(values.username, values.password);
+            if (response && response.data) {
+                localStorage.setItem('token', response.data.token);
+                console.log(response.data.token)
+                navigate('/');
+                
+            } else {
+                console.error('Error al iniciar sesión: Respuesta inesperada');
+                setLoginError(true);
+            }
+
         }catch(error){
-            console.error('Error en el login:', error.response.data);
+            console.error('Error en el login:', error.response ? error.response.data : error.message);
             setLoginError(true);
         }finally{
             setLoading(false);
@@ -33,7 +39,6 @@ const FormLogin = () => {
     };
         
 
-    
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
         setLoginError(true);
