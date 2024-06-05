@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Form, Input, Card } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import axios from 'axios';
 import {useNavigate} from "react-router-dom";
 import authService from '../../services/auth';
 import { useAuth } from '../../hooks/useAuth'
