@@ -5,6 +5,7 @@ import {useNavigate} from "react-router-dom";
 import authService from '../../services/auth';
 import { useAuth } from '../../hooks/useAuth'
 import axios from 'axios';
+
 import './FormLogin.css'
 
 const FormLogin = () => {
@@ -12,8 +13,12 @@ const FormLogin = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
+   
+
     const useAuthData = useAuth();
     console.log(useAuthData);
+
+    const { login } = useAuthData
 
     const onFinish = async (values) => {
         setLoading(true);
@@ -22,7 +27,7 @@ const FormLogin = () => {
             const response = await authService.loginFn(values.username, values.password);
             if (response && response.data) {
                 localStorage.setItem('token', response.data.token);
-                console.log(response.data.token)
+                login(response.data.token);
                 navigate('/');
                 
             } else {
